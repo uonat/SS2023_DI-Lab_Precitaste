@@ -21,7 +21,7 @@ def Draw_pred_BB(img,model_result):
     if model_result[0]["instances"].scores[row_index] > 0.4:
       x1,y1,x2,y2 = model_result[0]["instances"].pred_boxes[row_index].tensor.int().tolist()[0]
       cv2.rectangle(final_img, (x1, y1), (x2, y2), (0, 0, 255), 2)
-  cv2_imshow(final_img.get_image())
+  cv2_imshow(final_img)
   #cv2.imshow("bounding_box", final_img.get_image()[:, :, ::-1])
   #cv2.waitKey(0)
   #cv2.destroyAllWindows()
