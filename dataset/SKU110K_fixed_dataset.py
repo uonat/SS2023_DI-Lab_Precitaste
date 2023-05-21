@@ -14,14 +14,14 @@ def download_dataset():
     
     import gdown
     url = "https://drive.google.com/u/0/uc?id=1iq93lCdhaPUN0fWbLieMtzfB1850pKwd&export=download"
-    #output = "test.png"
+    output = "SKU110K_fixed.tar.gz"
     gdown.download(url, output)
 
     import tarfile
     with tarfile.open('SKU110K_fixed.tar.gz') as compressed_folder: 
-        compressed_folder.extractall()
+        compressed_folder.extractall('/content/SS2023_DI-Lab_Precitaste/dataset')
 
-    path_to_ds = "/content/SKU110K"
+    path_to_ds = "/content/SS2023_DI-Lab_Precitaste/dataset/SKU110K_fixed"
     return path_to_ds, "{}/annotations".format(path_to_ds)
 
 
