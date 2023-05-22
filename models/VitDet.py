@@ -9,8 +9,8 @@ from detectron2.utils.logger import setup_logger
 setup_logger()
 
 
-def load_model(model_path): #mask_rcnn_vitdet_h_100ep.py
-  cfg = LazyConfig.load("/content/SS2023_DI-Lab_Precitaste/detectron2/projects/ViTDet/configs/LVIS/mask_rcnn_vitdet_h_100ep.py")
+def load_model(model_path,config_path): #mask_rcnn_vitdet_h_100ep.py
+  cfg = LazyConfig.load(config_path)
   model =  instantiate(cfg.model)
   DetectionCheckpointer(model).load(model_path)
   return model
