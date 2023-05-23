@@ -58,7 +58,6 @@ class RPCDataset:
       # Category ids start from 1          
       self.category_info[cat['category_id']-1] = cur_cat_info
 
-
   def get_num_imgs(self):
     return self.num_images
   
@@ -72,6 +71,10 @@ class RPCDataset:
     img_path = os.path.join(self.imgs_dir, cur_img_info['file_name'])
     return img_path
 
+  def get_img_name_by_id(self, img_idx):
+    cur_img_info = self.img_info[img_idx]
+    return cur_img_info['file_name']
+  
   def get_annots_by_img_id(self, img_idx, key_for_category='sku_name'):
     """
     Returns the bounding box annotations of the image and their category labels
@@ -107,3 +110,40 @@ class RPCDataset:
         'width': cur_img_info['width'],
         'height':cur_img_info['height']
     }
+  
+  def create_annotations_for_evaluation(self, dest_folder_path, key_for_category='sku_name', bbox_format='xywh', use_single_class=False):
+    """
+    Creates ground truth annotation for each image in the dataset by creating a text file per image
+    to the destination folder. Each text file will named as the image. For img1_1223.jpg, img1_1223.txt
+    will be created. In the text file each bounding box represented by a single line in the format
+    <class_name> <x> <y> <w> <h> or <class_name> <xmin> <ymin> <xmax> <ymax>. Which format to be created
+    can be set by bbox_format parameter
+    Params:
+      dest_folder_path: Path of the folder that will contain gt text annotation files
+      key_for_category: Type of the class name to return. Default is sku_name
+      bbox_format: Format of the bounding boxes to write. Use 'xywh' or 'xyrb'. Default is xywh
+      use_single_class: Boolean flag to use single category name for all other classes. This is used for special case
+      to test region proposals. When set to true will print same class name for all bounding boxes. Default is False. 
+    """
+    for i in range(self.num_images):
+      cur_img_info = self.img_info[i]      
+      img_name = cur_img_info['file_name']
+      
+      txt_name = "".join(img_name.split('.')[:-1]) + ".txt"
+      txt_path = os.path.join(dest_folder_path, txt_name)
+      
+      annots = self.get_annots_by_img_id(i, key_for_category)
+      
+      with open(txt_path, "w") as txtfile:
+        for annot in annots:
+          bbox, class_name = annot
+          if use_single_class:
+            class_name = "object"
+          x,y,w,h = bbox
+          if bbox_format == "xywh":
+            txtfile.write("{} {} {} {} {}\n".format(class_name, x, y, w, h))
+          elif bbox_format == "xyrb":
+            xmax = x + w
+            ymax = y + h
+            txtfile.write("{} {} {} {} {}\n".format(class_name, x, y, xmax, ymax))
+      
