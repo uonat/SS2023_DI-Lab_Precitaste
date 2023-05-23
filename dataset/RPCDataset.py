@@ -58,7 +58,6 @@ class RPCDataset:
       # Category ids start from 1          
       self.category_info[cat['category_id']-1] = cur_cat_info
 
-
   def get_num_imgs(self):
     return self.num_images
   
@@ -72,6 +71,10 @@ class RPCDataset:
     img_path = os.path.join(self.imgs_dir, cur_img_info['file_name'])
     return img_path
 
+  def get_img_name_by_id(self, img_idx):
+    cur_img_info = self.img_info[img_idx]
+    return cur_img_info['file_name']
+  
   def get_annots_by_img_id(self, img_idx, key_for_category='sku_name'):
     """
     Returns the bounding box annotations of the image and their category labels
