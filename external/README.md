@@ -17,4 +17,4 @@ Grounding DINO addresses the challenge of open vocabulary object detection, wher
 
 ## Running the code ##
 
-Follow the instructions from the [README](GroundingDINO\README.md)
+Follow the instructions from the [README](./GroundingDINO/README.md)
