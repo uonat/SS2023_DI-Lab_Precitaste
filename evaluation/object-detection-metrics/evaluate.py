@@ -117,7 +117,7 @@ parser = argparse.ArgumentParser(description="Evaluates object detection results
 parser.add_argument('-gt', '--gtfolder', dest='gtFolder', metavar='', help='folder containing your ground truth bounding boxes')
 parser.add_argument('-det', '--detfolder', dest='detFolder', metavar='',  help='folder containing your detected bounding boxes')
 parser.add_argument('-sp', '--savepath', dest='savePath', metavar='', help='folder where the outputs are saved')
-
+parser.add_argument('-t', '--threshold', dest='iouThreshold', type=float, default=0.5, metavar='', help='IOU threshold. Default 0.5')
 parser.add_argument('-gtformat',
                     dest='gtFormat',
                     metavar='',
@@ -149,6 +149,8 @@ if __name__ == "__main__":
     
     gt_annotations_path = args.gtFolder
     pred_annotations_path = args.detFolder
+
+    iou_thres = args.iouThreshold
 
     if not os.path.exists(gt_annotations_path) or not os.path.isdir(gt_annotations_path):
         raise ValueError("GT annotations path doesn't exists or not a folder")
@@ -188,7 +190,7 @@ if __name__ == "__main__":
     # Get metrics with PASCAL VOC metrics
     metricsPerClass = evaluator.GetPascalVOCMetrics(
         all_bboxes,  # Object containing all bounding boxes (ground truths and detections)
-        IOUThreshold=0.3,  # IOU threshold
+        IOUThreshold=iou_thres,  # IOU threshold
         method=MethodAveragePrecision.EveryPointInterpolation)  # As the official matlab code
     
     print("Average precision values per class for the whole images:\n")
@@ -216,7 +218,7 @@ if __name__ == "__main__":
         # Get metrics with PASCAL VOC metrics
         metricsPerClass = per_img_evaluator.GetPascalVOCMetrics(
             img_bboxes,  # Object containing all bounding boxes (ground truths and detections)
-            IOUThreshold=0.3,  # IOU threshold
+            IOUThreshold=iou_thres,  # IOU threshold
             method=MethodAveragePrecision.EveryPointInterpolation)  # As the official matlab code
                 
         for mc in metricsPerClass:
