@@ -25,7 +25,7 @@ For this option please check command line arguments.
 2. Run the [evaluate.py](evaluate.py) with the given arguments:
 
 ```
-python evaluate.py -gt <path of the folder that includes gt texts> -det <path of the folder that includes pred texts> -sp <path to save outputs of the script> -gtformat <format of the gt bounding boxes. Can be xywh or xyrb. Default is xywh> -detformat <format of the prediction bounding boxes. Can be xywh or xyrb. Default is xywh>
+python evaluate.py -gt <path of the folder that includes gt texts> -det <path of the folder that includes pred texts> -sp <path to save outputs of the script> -gtformat <format of the gt bounding boxes. Can be xywh or xyrb. Default is xywh> -detformat <format of the prediction bounding boxes. Can be xywh or xyrb. Default is xywh> -t <IOU threshold to consider two bounding boxes targets same object. Float in between 0.0-1.0. Default is 0.5>
 ```
 
 The script will print the AP value per class for the whole dataset and plot precision x recall curve for each class.
