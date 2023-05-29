@@ -1,0 +1,57 @@
+import os
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+from tqdm.notebook import tqdm
+
+class KNNClassifier:
+    def __init__(self, n_neighboors=5, similarity_metric='cosine'):
+        allowed_metrics = ['cityblock', 'cosine', 'l1', 'l2', 'euclidean', 'haversine', 'manhattan', 'nan_euclidean']
+        if similarity_metric not in allowed_metrics:
+             raise ValueError("Given similarity metric is not supported. Please provide one of: {}".format(allowed_metrics))
+        self.metric = similarity_metric
+        self.n_neigh = n_neighboors
+        
+        self.knn_model = KNeighborsClassifier(n_neighbors=n_neighboors, metric=similarity_metric)
+    
+    def load_and_fit_RPC(self, rpc_train_feats_path):
+        folder_names = os.listdir(rpc_train_feats_path)
+        fixed_folder_names = set([f.replace('-','').replace('back', '').replace('~', '').replace('A', '').replace('B', '').replace('C', '') for f in folder_names])
+        
+        list_fixed_folder_names = list(fixed_folder_names)
+        self.class_to_label = {list_fixed_folder_names[i]:i for i in range(len(list_fixed_folder_names))} 
+
+        xs = []
+        ys = []
+        
+        for folder_name in tqdm(folder_names):
+            fixed_folder_name = folder_name.replace('-','').replace('back', '').replace('~', '').replace('A', '').replace('B', '').replace('C', '')
+            folder_label = self.class_to_label[fixed_folder_name]
+            folder_path = os.path.join(rpc_train_feats_path, folder_name)
+            feature_paths = [os.path.join(rpc_train_feats_path, folder_name, fname) for fname in os.listdir(folder_path) if '.npy' in fname]
+            
+            folder_features = []
+            for feature_file_path in feature_paths:
+                with open(feature_file_path, 'rb') as npfile:
+                    np_feat = np.load(npfile, allow_pickle=True)
+                    folder_features.append(np_feat)
+        
+            xs = xs + folder_features
+            ys = ys + [folder_label] * len(folder_features)
+            
+        self.X = np.concatenate(xs)
+        self.Y = np.array(ys)
+        
+        self.knn_model.fit(self.X, self.Y)
+        print("Loadded feature vector with shape: {}, label array with shape: {}".format(self.X.shape, self.Y.shape))
+    
+    def fit_samples(self, X, Y):
+        print("Fitting feature vector with shape: {}, label array with shape: {}".format(X.shape, Y.shape))
+        self.X = X
+        self.Y = Y
+        self.knn_model.fit(X, Y)
+
+    def predict_sample(self, sample_features):
+        return self.knn_model.predict(sample_features)
+    
+    def get_RPC_class_dict(self):
+        return self.class_to_label
