@@ -103,9 +103,10 @@ class RPCDataset:
     """
     annots = self.get_annots_by_img_id(img_idx, key_for_category)
     cur_img_info = self.img_info[img_idx]
-    img_path = os.path.join(self.imgs_dir, cur_img_info['file_name'])
     return {
-        'img': cv2.imread(img_path),
+        'img_path': self.get_img_path_by_id(img_idx),
+        'img_name': self.get_img_name_by_id(img_idx),
+        'img': self.get_img_by_id(img_idx),
         'annots': annots,
         'width': cur_img_info['width'],
         'height':cur_img_info['height']
