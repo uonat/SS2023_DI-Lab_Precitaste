@@ -55,3 +55,33 @@ class KNNClassifier:
     
     def get_RPC_class_dict(self):
         return self.class_to_label
+    
+    def get_neighbors(self, x):
+        """
+        Returns distance to each k neighbors and their indices
+        """
+        return self.knn_model.kneighbors(x, return_distance=True)
+    
+    def get_mean_dist_neighbors(self, x, selected_labels=None):
+        """
+        Returns mean distance of each sample to all of its neighbors.
+        If class label is provided returns the distance to the neighbors 
+        of that specific class only
+        """
+        distances, neighbor_indices = self.get_neighbors(x)
+        if selected_labels is None:
+            return np.mean(distances,  axis=-1)
+        
+        # A function to get label of each neighbor from their indices
+        get_label_of_index = lambda x: self.Y[x]
+        labels_of_neighbor = get_label_of_index(neighbor_indices)
+
+        # Mask that selects neighbors of each item in row by their given selected label
+        label_mask = labels_of_neighbor == selected_labels[:, np.newaxis]
+
+        # Calculate mean of non zero elements which will be the neighbors belong to selected classes
+        sum_distances = np.sum(distances * label_mask, axis=-1)
+        count_nonzero_elements = np.sum((distances * label_mask) != 0, axis=-1)
+        mean_distances = sum_distances / count_nonzero_elements
+
+        return np.where(np.isnan(mean_distances), -1, mean_distances)        

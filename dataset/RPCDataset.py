@@ -147,4 +147,17 @@ class RPCDataset:
             xmax = x + w
             ymax = y + h
             txtfile.write("{} {} {} {} {}\n".format(class_name, x, y, xmax, ymax))
-      
+  
+  def get_class_names(self):
+    """
+    Returns 200 English class names. 
+    """
+    return [annot['name'] for annot in self.annots['categories']]
+  
+  def get_base_class_names(self):
+    """
+    Returns 17 English base class names. The are obtained by removing number
+    (brand information) from the original class names. E.g: 1_puffed_food, 2_puffed_food, 3_puffed_food
+    all becomes puffed_food
+    """
+    return list(set(self.get_class_names()))
