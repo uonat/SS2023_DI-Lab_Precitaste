@@ -51,13 +51,15 @@ def is_box_inside_other(bbox1, bbox2, eps):
     return 0
 
 
-def eliminate_boxes(bboxes, img_h, img_w, area_thres=0.25, eps=10):
+def eliminate_boxes(bboxes, img_h, img_w, area_thres=0.25, eps=10, return_bbox_indices=False):
     """
     Eliminates bounding boxes if its area is bigger than the @area_thres of the image area
     or is small and inside another bbox
     @area_thres is the threshold for eliminating big bounding boxes, bbox whose relative 
     area bigger than this will be elminated
     @eps is the small tolerance to consider both points same
+    If @return_bbox_indices is true then returns the index of bounding boxes from the @bboxes parameter
+    that this function kept
     """    
     img_area = img_h * img_w
     
@@ -87,4 +89,7 @@ def eliminate_boxes(bboxes, img_h, img_w, area_thres=0.25, eps=10):
             if ret_val == 2:
                 remove_indices.append(j)    
     
-    return [final_boxes[i] for i in range(len(final_boxes)) if i not in remove_indices]
+    if return_bbox_indices:
+        return [final_boxes[i] for i in range(len(final_boxes)) if i not in remove_indices], [i for i in range(len(final_boxes)) if i not in remove_indices]
+    if return_bbox_indices:
+        return [final_boxes[i] for i in range(len(final_boxes)) if i not in remove_indices]
