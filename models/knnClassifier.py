@@ -13,24 +13,30 @@ class KNNClassifier:
         
         self.knn_model = KNeighborsClassifier(n_neighbors=n_neighboors, metric=similarity_metric)
     
-    def load_and_fit_RPC(self, rpc_train_feats_path):
+    def load_and_fit_RPC(self, rpc_train_feats_path, n_sample=-1, allowed_folder_names=None):
         folder_names = os.listdir(rpc_train_feats_path)
-        fixed_folder_names = set([f.replace('-','').replace('back', '').replace('~', '').replace('A', '').replace('B', '').replace('C', '') for f in folder_names])
-        
-        list_fixed_folder_names = list(fixed_folder_names)
-        self.class_to_label = {list_fixed_folder_names[i]:i for i in range(len(list_fixed_folder_names))} 
+
+        if allowed_folder_names is not None:
+            folder_names = [fname for fname in folder_names if fname in allowed_folder_names]
+
+        self.class_to_label = {folder_names[i]:i for i in range(len(folder_names))}
+        self.label_to_class = {i:folder_names[i] for i in range(len(folder_names))}
 
         xs = []
         ys = []
         
         for folder_name in tqdm(folder_names):
-            fixed_folder_name = folder_name.replace('-','').replace('back', '').replace('~', '').replace('A', '').replace('B', '').replace('C', '')
-            folder_label = self.class_to_label[fixed_folder_name]
+            folder_label = self.class_to_label[folder_name]
             folder_path = os.path.join(rpc_train_feats_path, folder_name)
             feature_paths = [os.path.join(rpc_train_feats_path, folder_name, fname) for fname in os.listdir(folder_path) if '.npy' in fname]
             
+            if n_sample != -1:
+                sampled_feature_paths = np.random.choice(feature_paths, n_sample, replace=False).tolist()
+            else:
+                sampled_feature_paths = feature_paths.copy()
+            
             folder_features = []
-            for feature_file_path in feature_paths:
+            for feature_file_path in sampled_feature_paths:
                 with open(feature_file_path, 'rb') as npfile:
                     np_feat = np.load(npfile, allow_pickle=True)
                     folder_features.append(np_feat)
