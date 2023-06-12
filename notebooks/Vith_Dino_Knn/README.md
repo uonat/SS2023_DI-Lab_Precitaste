@@ -8,10 +8,16 @@ This directory contains the notebook to implement our second method: Detecting o
 
 This method is implemented in three different notebooks to fit the execution time into allowed hours of Kaggle resources. After each step, the output is saved so that each module can be modified without requiring to modify previous steps. 
 
-1. [1-vith-dinov2-knn-rpc](1-vith-dinov2-knn-rpc.ipynb): This notebook runs ViTH on RPC validation dataset. Fills `self.img_name, self.img_path, self.pred_bbox, self.pred_score_bbox, self.pred_features, self.is_train`
+1. [1-vith-dinov2-knn-rpc](1-vith-dinov2-knn-rpc.ipynb): This notebook runs ViTH on RPC validation dataset. Fills `self.img_name, self.img_path, self.pred_bbox, self.pred_score_bbox, self.pred_features, self.is_train` fields of the objects. 
+
+Note that some objects after this notebook might contain `self.pred_bbox and self.pred_score_bbox` equal to `None`. This means that these objects are missed by the object proposer and must be considered as false negatives of the whole system.
+
+Likewise some objects might contain `self.gt_bbox and self.gt_label` equal to `None`. This objects mean that they are found extra by the object proposer and did not match with any ground truth bounding box. They can be false positives for the whole system or eliminated by the later stages. 
+
         
 2. [2-vith-dino-knn](2-vith-dino-knn.ipynb): For each region detected on the first notebook, extracts DINOv2 features. Fills `self.pred_features`
-3. [3-vith-dino-knn](3-vith-dino-knn.ipynb): Evaluates method using KNN classifier. Requires extracted train object features. Fills `self.pred_label, self.class_score`
+3. [3-vith-dino-knn](3-vith-dino-knn.ipynb): Evaluates method using KNN classifier. Requires extracted train object features. The features extracted by DINOv2 is downloadable from this [link](https://drive.google.com/file/d/149CjK5Rj5t6XnvXFwMKayuvNNsybo0iL/view?usp=sharing).
+Fills `self.pred_label, self.class_score`
 
 All notebook share a common data structure: 
 
