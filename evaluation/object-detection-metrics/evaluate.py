@@ -205,7 +205,8 @@ if __name__ == "__main__":
         irec = mc['interpolated recall']
         # Print AP per class
         print('Class: %s: AP: %f' % (c, average_precision))
-        print('Class: %s: Recall: %f Precision: %f' % (c, recall[-1], precision[-1]))
+        if len(recall) > 0 and len(precision) > 0:
+            print('Class: %s: Recall: %f Precision: %f' % (c, recall[-1], precision[-1]))
 
     results = []
 
