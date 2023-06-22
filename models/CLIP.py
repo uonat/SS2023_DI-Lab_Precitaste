@@ -87,6 +87,32 @@ def Calculate_Embeddings(clip_model,preprocess,dataset,output_dir,device): ####T
 
     return load_results(output_dir,dataset.get_num_imgs())
 
+def Calculate_Embeddings_general(clip_model,preprocess,dataset,output_dir,device): ####TODO: CHECK tolist()[0]!!!!!!!!!
+    Results = []
+    total_num_obj = 0
 
+    for i in tqdm(range(dataset.get_num_imgs())): 
+        img_path = dataset.get_img_path_by_id(i)
+        img = cv2.cvtColor(cv2.imread(img_path), cv2.COLOR_BGR2RGB)
+        annots = dataset.get_annots_by_img_id(i, key_for_category='sku_name')
+        total_num_obj += len(annots)
+        
+        for annot in annots:
+            x1,y1,w,h = list(map(int, annot[0]))
+            x2,y2 = x1+w,y1+h
+            img_p = preprocess(Image.fromarray(img[y1:y2,x1:x2].copy())).unsqueeze(0).to(device)
+            with torch.no_grad():
+                image_features = clip_model.encode_image(img_p)
+            image_features /= image_features.norm(dim=-1, keepdim=True)
 
-  
+            Results.append((image_features.tolist()[0],annot[1]))  
+        
+        if (i+1) % 500 == 0: # save in every 500 images
+            with open(output_dir, "ab") as fp:
+                for item in Results: pickle.dump(item, fp)
+            Results = []
+
+    with open(output_dir, "ab") as fp:    # save the remaining
+        for item in Results: pickle.dump(item, fp)
+
+    return load_results(output_dir,total_num_obj)
