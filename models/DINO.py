@@ -52,7 +52,7 @@ class DINOFeatureExtractor:
 
         img_tensor = transform(img)[:3]
 
-        img_tensor = torch.unsqueeze(img_tensor, 0)
+        img_tensor = img_tensor.unsqueeze(0).to(self.device)
 
         with torch.no_grad():
 
