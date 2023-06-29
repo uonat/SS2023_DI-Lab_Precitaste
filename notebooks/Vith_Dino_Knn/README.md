@@ -18,6 +18,7 @@ Likewise some objects might contain `self.gt_bbox and self.gt_label` equal to `N
 2. [2-vith-dino-knn](2-vith-dino-knn.ipynb): For each region detected on the first notebook, extracts DINOv2 features. Fills `self.pred_features`
 3. [3-vith-dino-knn](3-vith-dino-knn.ipynb): Evaluates method using KNN classifier. Requires extracted train object features. The features extracted by DINOv2 is downloadable from this [link](https://drive.google.com/file/d/149CjK5Rj5t6XnvXFwMKayuvNNsybo0iL/view?usp=sharing).
 Fills `self.pred_label, self.class_score`
+4. [Vith_Dino_Combined](Vith_Dino_Combined.ipynb): This notebook is a combination of first two stages with a different inference algorithm. Instead of KNN it uses cosine similarity to find the most similar training object. Also, this notebook is the refactored version of the notebooks. 
 
 All notebook share a common data structure: 
 
@@ -51,7 +52,7 @@ class Prediction:
 
 A `Prediction` object is cretead for each detection or undetected ground truth objects in the dataset. They are initially created by the first notebook and saved as json files. Then each other notebook first loads the json files and extends them with new fields. 
 
-You can find the generated files in this [link](https://drive.google.com/file/d/1IJ12Q4dZBIR7oULCrWfZVeIGorHd7HEm/view?usp=sharing). This file contains below files:
+You can find the generated files in this [link](https://drive.google.com/file/d/1UAvnxhYeUkO9cRyvgFqDHXnYTN0GU0Fa/view?usp=sharing). This file contains below files:
 
 * VitH
     * train_config: Configuration file that keeps training, validation classes and train and validation image indices
