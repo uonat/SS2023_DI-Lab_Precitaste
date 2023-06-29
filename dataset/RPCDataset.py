@@ -2,6 +2,7 @@ import os
 import cv2
 import json
 
+
 def get_annots(json_file_path):
   with open(json_file_path, 'r') as jfile:
     annot = json.load(jfile)
@@ -161,3 +162,4 @@ class RPCDataset:
     all becomes puffed_food
     """
     return list(set(self.get_class_names()))
+  
