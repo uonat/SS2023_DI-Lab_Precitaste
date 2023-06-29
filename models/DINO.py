@@ -11,7 +11,7 @@ class DINOFeatureExtractor:
             raise ValueError("Given version of the dino not found! Please provide one of: {}".format(dino_version))
             
         self.model = torch.hub.load('facebookresearch/dinov2', dino_version)
-        
+        self.patch_dim = 14
         self.model.eval()
         self.model.to(self.device)
         
@@ -38,13 +38,13 @@ class DINOFeatureExtractor:
         return patch_feats
 
     def print_patch_features(self, pil_img, patch_num=52, background_thres=20):
-
+        # Source: https://github.com/facebookresearch/dinov2/issues/23
         img = pil_img.convert('RGB')
         # add below to class code 
         
         transform = T.Compose([
             #T.GaussianBlur(9, sigma=(0.1, 2.0)),
-            T.Resize((patch_num * self.patch_dim, patch_num * self.patch_dim)),
+            T.Resize((patch_num * self.patch_dim, patch_num * self.patch_dim), interpolation=T.InterpolationMode.BICUBIC),
             T.CenterCrop((patch_num * self.patch_dim, patch_num * self.patch_dim)),
             T.ToTensor(),
             T.Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
