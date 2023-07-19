@@ -195,6 +195,8 @@ if __name__ == "__main__":
     
     print("Average precision values per class for the whole images:\n")
     sum_ap = 0.0
+    sum_recall = 0.0
+    sum_precision = 0.0
     count_classes = 0
     # Loop through classes to obtain their metrics
     for mc in metricsPerClass:
@@ -204,6 +206,8 @@ if __name__ == "__main__":
         recall = mc['recall']
         average_precision = mc['AP']
         sum_ap += average_precision
+        sum_recall += recall
+        sum_precision += precision
         count_classes += 1
         ipre = mc['interpolated precision']
         irec = mc['interpolated recall']
@@ -212,7 +216,7 @@ if __name__ == "__main__":
         if len(recall) > 0 and len(precision) > 0:
             print('Class: %s: Recall: %f Precision: %f' % (c, recall[-1], precision[-1]))
     
-    print('mAP: %f' % (sum_ap/count_classes))
+    print('mAP: %f precision: %f recall: %f' % (sum_ap/count_classes, sum_precision/count_classes, sum_recall/count_classes))
     results = []
 
     print("Evaluating each image...")
