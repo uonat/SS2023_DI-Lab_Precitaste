@@ -206,8 +206,8 @@ if __name__ == "__main__":
         recall = mc['recall']
         average_precision = mc['AP']
         sum_ap += average_precision
-        sum_recall += recall
-        sum_precision += precision
+        sum_recall += recall[-1]
+        sum_precision += precision[-1]
         count_classes += 1
         ipre = mc['interpolated precision']
         irec = mc['interpolated recall']
