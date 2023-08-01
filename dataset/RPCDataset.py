@@ -161,5 +161,5 @@ class RPCDataset:
     (brand information) from the original class names. E.g: 1_puffed_food, 2_puffed_food, 3_puffed_food
     all becomes puffed_food
     """
-    return list(set(self.get_class_names()))
+    return list(set([annot['supercategory'] for annot in self.annots['categories']]))
   
